@@ -10,12 +10,12 @@ package compilador;
  */
 public class Token {
 
-    final TipoToken tipoToken;
+    final TipoDeToken tipoToken;
     final String lexema;
     final String literal;
     final int numeroLinea;
 
-    Token(TipoToken tipo, String lexema, String literal, int linea) {
+    Token(TipoDeToken tipo, String lexema, String literal, int linea) {
         this.tipoToken = tipo;
         this.lexema = lexema;
         this.literal = literal;

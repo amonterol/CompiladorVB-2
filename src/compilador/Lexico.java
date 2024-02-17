@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,8 +34,8 @@ public class Lexico {
     private static List<String> listaCodigoAnalizado;
     private utilitarios.Error errores = new utilitarios.Error();
 
-    private static List<Token> listaDeTokens;
-    private static List<List<Token>> listaTokens = new ArrayList<List<Token>>();
+    private static List<Token> tokensEnUnaLineaDeCodigo;
+    private static List<List<Token>> listaDeTokens = new ArrayList<List<Token>>();
 
     public static String nombreDePrograma = " ";
     public static boolean nombreDeProgramaEsIdentificadorValido = true;
@@ -62,6 +63,8 @@ public class Lexico {
 
     public void analizarPrograma(String[] args) {
         ArchivoOriginal archivoOriginal = new ArchivoOriginal(args);
+        //Almacena el numero de linea actual que se esta leyendo.
+        int numeroDeLineaActual = 1;
 
         //Valida si se adjunta un único archivo con código fuente al programa
         int existeArchivoOriginal = archivoOriginal.validarExistenciaArchivoInicial();
@@ -74,16 +77,54 @@ public class Lexico {
                 try {
                     listaCodigoOriginal = leerContenidoArchivoTexto(rutaCodigoFuente, args);
                 } catch (IOException ex) {
-                    
                     JOptionPane.showMessageDialog(null, errores.obtenerDescripcionDelError(104), "Ruta incorrecta", JOptionPane.WARNING_MESSAGE);
                     //Logger.getLogger(Lexico.class.getName()).log(Level.SEVERE, null, ex);
-
                 }
 
             }
         }
 
-        imprimirContenidoArchivoTexto(listaCodigoOriginal);
+        imprimirContenidoArchivoTexto(listaCodigoOriginal); //BORRAR
+
+         try {
+
+            if (!listaCodigoOriginal.isEmpty()) {
+                //System.out.println("\n1.- codigo fuente no esta vacio"); //BORRAR
+
+                //System.out.println("\n1.- INICIO codigo fuente"); //BORRAR
+                imprimirContenidoArchivoTexto(listaCodigoOriginal); //BORRAR
+                //System.out.println("\n1.- FIN codigo fuente"); //BORRAR
+
+                for (String lineaDeCodigo : listaCodigoOriginal) {
+
+                    //System.out.println("\n2.- INICIO LINEA DE CODIGO"); //BORRAR
+                    //System.out.println(lineaDeCodigo); //BORRAR
+                    //System.out.println("\n2.- FIN LINEA DE CODIGO"); //BORRAR
+                    tokensEnUnaLineaDeCodigo = new ArrayList<>();
+                    if (lineaDeCodigo.isBlank() || lineaDeCodigo.isEmpty()) {
+                        System.out.println("\n3.- ES UN NUEVA LINEA DE CODIGO ESTA EN BLANCO " + lineaDeCodigo); //BORRAR
+                        //agregarNuevoToken("Linea en blanco", Lexico.TipoDeToken.LINEA_EN_BLANCO.toString(), null, numeroDeLineaActual);
+                        agregarNuevoTokenATokensEnUnaLinea(TipoDeToken.LINEA_EN_BLANCO,"linea en blanco","linea en blanco", numeroDeLineaActual);
+                        listaDeTokens.add(tokensEnUnaLineaDeCodigo);
+                    } else {
+                        // System.out.println("\n4.-.- BORRAR> INICIO LINEA DE CODIGO CONVERTIDA A CARACTERES  " + lineaDeCodigo);
+                        char[] arregloCaracteres = lineaDeCodigo.toCharArray();
+                        // iterar sobre la array `char[]` usando for-loop mejorado
+                        for (char ch : arregloCaracteres) {
+                            System.out.print(ch);
+                            System.out.print(" ");
+                        }
+                        System.out.println(" ");
+
+                    }
+                    ++numeroDeLineaActual; //Aumenta con cada linea que es analizada
+                }
+            }
+        } catch (NullPointerException ex) {
+            System.out.println("No hay lineas que leer en el archivo de codigo fuente" + ex);
+        }
+        
+       
 
     }
 
@@ -116,4 +157,13 @@ public class Lexico {
 
     }
 
+   public static void agregarNuevoTokenATokensEnUnaLinea(TipoDeToken tipoDeToken, String lexema, String literal, int numeroLinea) {
+        Token nuevoToken = new Token(tipoDeToken, lexema, literal, numeroLinea);
+
+        tokensEnUnaLineaDeCodigo.add(nuevoToken);
+    }
+
+   
+   
+    
 }

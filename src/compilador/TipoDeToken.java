@@ -8,7 +8,7 @@ package compilador;
  *
  * @author abmon
  */
-public enum TipoToken {
+public enum TipoDeToken {
         
         //Literales
         IDENTIFICADOR,    
